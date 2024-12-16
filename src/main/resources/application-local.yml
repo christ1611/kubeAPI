@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: kubeApi
+  jmx:
+    enabled: false
+  main:
+    lazy-initialization: false
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  datasource:
+    pool-name: batchMain-cp
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: kubeApi
+    password: kubeApi
+    auto-commit: false
+    maximum-pool-size: 30
+    minimum-idle: 1
+  data:
+    jpa:
+      repositories:
+        enabled: false
+  quartz:
+    jdbc:
+#      initialize-schema: always
+      initialize-schema: NEVER
+    job-store-type: jdbc
+    scheduler-name: QuartzScheduler
+    properties:
+      org.quartz.scheduler:
+        instanceId: AUTO
+      org.quartz.jobStore:
+        isClustered: true
+        tablePrefix: QRTZ_
+        driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+
+# Logging Configuration
+logging:
+  level:
+    com:
+      kubeApi: DEBUG
+
+scdf:
+  uri: temp
+
+kube:
+  uri: https://api.okd.cloud.io:6443/
+#  uri: https://10.10.5.34:6443/
+  podVer: v1
+  jobVer: batch/v1
+  tokenVer: authentication.k8s.io/v1
+  deploymentVer: apps/v1
+  namespace: kube
+  serviceAccount: deployer
+

@@ -1,0 +1,77 @@
+plugins {
+    id 'java'
+    id "org.springframework.boot" version "${springBootVersion}"
+    id "io.spring.dependency-management" version "${springDependencyVersion}"
+}
+
+group = 'org.kubeApi'
+version = '1.0-SNAPSHOT'
+
+
+bootJar {
+    enabled = true
+    mainClass = 'com.kubeApi.KubeApiApplication'
+    doFirst {
+        println "Building application with profile: ${project.findProperty('spring.profiles.active') ?: 'none'}"
+    }
+}
+jar { enabled = false }
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    /**  Springframework  **/
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
+    implementation 'org.springframework:spring-context-indexer'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation ('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    implementation ('org.springframework.boot:spring-boot-starter-undertow') {
+        exclude group: 'io.undertow' , module:'undertow-websockets-jsr'
+    }
+
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
+    /** AspectJ 라이브러리 추가 */
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    /** jsonwebtoken */
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+
+    implementation "org.apache.commons:commons-lang3:${apacheCommTool}"
+    implementation "org.projectlombok:lombok:${lombokVersion}"
+
+    /** Spring Cloud Data Flow **/
+    implementation "org.springframework.cloud:spring-cloud-dataflow-rest-client:${springCloudDataflowVersion}"
+
+    /** Kubernetes */
+    implementation "io.fabric8:kubernetes-client:6.7.2"
+    implementation "io.kubernetes:client-java:15.0.1"
+
+    /** unix Data converter */
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    /** swagger **/
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
+
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+test {
+    useJUnitPlatform()
+}
